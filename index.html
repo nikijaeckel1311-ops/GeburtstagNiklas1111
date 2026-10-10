@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master-Planer • Niklas' 18. Geburtstag</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -16,25 +17,11 @@
                 radial-gradient(circle at 10% 10%, rgba(236, 72, 153, 0.22) 0%, transparent 45%),
                 radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.22) 0%, transparent 45%),
                 radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-                linear-gradient(rgba(3, 7, 18, 0.92), rgba(3, 7, 18, 0.96)),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+                linear-gradient(rgba(3, 7, 18, 0.92), rgba(3, 7, 18, 0.96));
         }
-        .glass-panel {
-            background: rgba(12, 16, 32, 0.75);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(59, 130, 246, 0.15);
-        }
-        .glass-card {
-            background: rgba(20, 27, 45, 0.6);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.25s ease;
-        }
-        input[type="checkbox"]:checked + span {
-            text-decoration: line-through;
-            color: #64748b;
-        }
+        .glass-panel { background: rgba(12, 16, 32, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8); }
+        .glass-card { background: rgba(20, 27, 45, 0.6); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        input[type="checkbox"]:checked + span { text-decoration: line-through; color: #64748b; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(5, 5, 8, 0.5); }
         ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 3px; }
@@ -42,13 +29,13 @@
 </head>
 <body class="min-h-screen py-10 px-4 sm:px-6 lg:px-8 relative overflow-x-hidden">
 
-    <!-- Auth Modal Overlay -->
+    <!-- Auth Modal -->
     <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4">
         <div class="glass-panel p-8 rounded-3xl max-w-sm w-full text-center space-y-4 border-t-2 border-pink-500">
             <div class="text-3xl">🔐</div>
             <h2 class="text-xl font-bold text-white">Admin-Zugang</h2>
             <p class="text-xs text-slate-400">Gib deinen PIN-Code ein (Standard: <strong>1818</strong>):</p>
-            <input type="password" id="pinInput" placeholder="PIN eingeben..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-center text-lg text-white font-black tracking-widest focus:outline-none focus:border-pink-500">
+            <input type="password" id="pinInput" placeholder="PIN..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-center text-lg text-white font-black tracking-widest focus:outline-none focus:border-pink-500">
             <button onclick="checkPin()" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-pink-600/30">
                 Dashboard Entsperren
             </button>
@@ -64,11 +51,9 @@
                 <div class="space-y-3">
                     <div class="inline-flex items-center gap-2 px-3 py-1 text-xs font-bold uppercase tracking-wider bg-cyan-500/15 text-cyan-300 rounded-full border border-cyan-500/30">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        Admin Command Center • Live Sync
+                        Admin Command Center • Supabase Cloud Sync
                     </div>
-                    <h1 class="text-3xl sm:text-5xl font-black text-white pt-1 tracking-tight">
-                        Niklas' 18. Geburtstag
-                    </h1>
+                    <h1 class="text-3xl sm:text-5xl font-black text-white pt-1">Niklas' 18. Geburtstag</h1>
                     <p class="text-slate-400 text-sm sm:text-base font-semibold">13. November • Anleger Schützenverein Scharnebeck</p>
                     
                     <div class="pt-2 flex flex-wrap gap-3">
@@ -81,25 +66,13 @@
                         <button onclick="shareWhatsApp()" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl transition text-xs shadow-lg shadow-emerald-600/30 border border-emerald-400/30">
                             💬 WhatsApp Share
                         </button>
-                        <button onclick="exportData()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2.5 px-3 rounded-xl border border-slate-700 transition text-xs">
-                            📥 Backup Export
-                        </button>
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-3 gap-3 text-center bg-slate-950/80 p-5 rounded-2xl border border-slate-800 shadow-inner min-w-[260px]">
-                    <div>
-                        <span id="days" class="text-2xl sm:text-3xl font-black text-pink-400">00</span>
-                        <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-1">Tage</span>
-                    </div>
-                    <div>
-                        <span id="hours" class="text-2xl sm:text-3xl font-black text-cyan-400">00</span>
-                        <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-1">Std</span>
-                    </div>
-                    <div>
-                        <span id="minutes" class="text-2xl sm:text-3xl font-black text-emerald-400">00</span>
-                        <span class="block text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-1">Min</span>
-                    </div>
+                    <div><span id="days" class="text-2xl sm:text-3xl font-black text-pink-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold mt-1">Tage</span></div>
+                    <div><span id="hours" class="text-2xl sm:text-3xl font-black text-cyan-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold mt-1">Std</span></div>
+                    <div><span id="minutes" class="text-2xl sm:text-3xl font-black text-emerald-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold mt-1">Min</span></div>
                 </div>
             </div>
         </header>
@@ -107,12 +80,10 @@
         <!-- Main Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Linke Spalte (5 cols) -->
+            <!-- Linke Spalte -->
             <div class="lg:col-span-5 glass-panel rounded-3xl p-6 flex flex-col justify-between space-y-6 border-t-2 border-pink-500/50">
                 <div class="space-y-5">
-                    <h2 class="text-lg font-bold text-pink-400 flex items-center gap-2">
-                        <span>📊</span> Auto-Kalkulator & Logistik
-                    </h2>
+                    <h2 class="text-lg font-bold text-pink-400 flex items-center gap-2"><span>📊</span> Auto-Kalkulator & Logistik</h2>
 
                     <div class="bg-gradient-to-r from-slate-950 to-slate-900 border border-pink-500/30 p-4 rounded-2xl space-y-3 shadow-inner">
                         <div class="flex items-center justify-between">
@@ -139,7 +110,7 @@
                     <div class="bg-slate-950/60 border border-slate-800 p-4 rounded-2xl space-y-3">
                         <div class="flex justify-between items-center text-xs text-slate-300 font-bold">
                             <span>💰 Gesamtkosten (€):</span>
-                            <input type="number" id="totalCostInput" value="90" oninput="calculateBudget()" class="w-24 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-right text-pink-400 font-black focus:outline-none focus:border-pink-500">
+                            <input type="number" id="totalCostInput" value="90" oninput="calculateBudget()" class="w-24 bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-right text-pink-400 font-black focus:outline-none">
                         </div>
                         <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-800 text-slate-400 font-medium">
                             <span>Anteil pro Kopf:</span>
@@ -147,38 +118,29 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800 text-xs space-y-1">
-                        <strong class="text-slate-200 block font-bold">📍 Anfahrts- & Liefer-Guide</strong>
-                        <p class="text-slate-400 leading-relaxed">
-                            Anleger am Schützenverein Scharnebeck. Für Lieferdienst: <em>"Am Schützenverein bis zum Kanal durchfahren, stehen am Anleger."</em>
-                        </p>
-                    </div>
-
                     <div class="bg-slate-950/60 border border-slate-800 p-4 rounded-2xl flex items-center gap-4">
                         <div id="qrcode" class="bg-white p-2 rounded-xl shadow-md flex-shrink-0"></div>
                         <div class="space-y-1">
                             <strong class="text-xs font-bold text-white block">📱 QR-Code für Gäste</strong>
-                            <p class="text-[11px] text-slate-400 leading-snug">Scannen zum direkten Eintragen vor Ort.</p>
+                            <p class="text-[11px] text-slate-400 leading-snug">Scannen zum Eintragen vor Ort.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="pt-4 border-t border-slate-800">
-                    <a href="https://maps.google.com/?q=Scharnebeck+Elbe-Seitenkanal+Schützenverein" target="_blank" class="w-full block text-center bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 px-4 rounded-xl transition text-xs border border-slate-700 shadow-sm">
+                    <a href="https://maps.google.com/?q=Scharnebeck+Elbe-Seitenkanal+Schützenverein" target="_blank" class="w-full block text-center bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 px-4 rounded-xl text-xs border border-slate-700">
                         📍 Spot in Google Maps
                     </a>
                 </div>
             </div>
 
-            <!-- Rechte Spalte (7 cols) -->
+            <!-- Rechte Spalte -->
             <div class="lg:col-span-7 glass-panel rounded-3xl p-6 flex flex-col justify-between border-t-2 border-cyan-500/50">
                 <div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3 border-b border-slate-800 pb-4">
                         <div>
-                            <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
-                                <span>👥</span> Live-Gästeliste & Admin-Verwaltung
-                            </h2>
-                            <p class="text-xs text-slate-400">Verwalte Zusagen oder lösche Einträge bei Bedarf.</p>
+                            <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2"><span>👥</span> Cloud Gästeliste & Admin</h2>
+                            <p class="text-xs text-slate-400">Live-Zusagen direkt aus der Datenbank.</p>
                         </div>
                         <div class="flex gap-2 text-[11px] font-extrabold">
                             <span id="badge-yes" class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">0 Dabei</span>
@@ -187,7 +149,7 @@
                         </div>
                     </div>
 
-                    <div id="adminGuestList" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
+                    <div id="adminGuestList" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1">Lade Live-Daten...</div>
                 </div>
             </div>
 
@@ -195,56 +157,30 @@
 
         <!-- Master Checkliste -->
         <div class="glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
-                <div>
-                    <h2 class="text-xl font-bold tracking-tight text-white">Master-Checkliste & Ausrüstung</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Hake ab und koordiniere die Mitbringsel.</p>
-                </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <span id="progress-text" class="text-xs font-bold text-cyan-400">0%</span>
-                    <div class="w-36 bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
-                        <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-cyan-400 h-full rounded-full transition-all duration-300 w-0"></div>
-                    </div>
-                </div>
-            </div>
-
+            <h2 class="text-xl font-bold tracking-tight text-white border-b border-slate-800 pb-4">Master-Checkliste & Ausrüstung</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="checklistContainer"></div>
-        </div>
-
-        <!-- Quick Notizen -->
-        <div class="glass-panel rounded-3xl p-6">
-            <h2 class="text-base font-bold mb-2 text-pink-400 flex items-center gap-2">
-                <span>📝</span> Admin-Notizen & Pizza-Details
-            </h2>
-            <textarea id="scratchpad" rows="3" placeholder="Pizzeria Telefonnummer, Uhrzeiten oder sonstige Notizen..." class="w-full bg-slate-950/60 border border-slate-800 rounded-2xl p-4 text-xs text-slate-200 focus:outline-none focus:border-pink-500 resize-none shadow-inner"></textarea>
         </div>
 
     </div>
 
     <script>
-        const STORAGE_KEY = 'niklas_birthday_shared_guests_v1';
+        const SUPABASE_URL = 'DEINE_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'DEIN_SUPABASE_ANON_KEY';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let globalPizzaCount = 1;
-        let previousGuestCount = 0;
 
         function checkPin() {
-            const input = document.getElementById('pinInput').value;
-            if(input === '1818') {
+            if(document.getElementById('pinInput').value === '1818') {
                 document.getElementById('authModal').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
+                fetchCloudGuests();
             } else {
                 document.getElementById('pinError').classList.remove('hidden');
             }
         }
 
         const guestPageUrl = window.location.href.replace('index.html', '') + 'gast.html';
-        new QRCode(document.getElementById("qrcode"), {
-            text: guestPageUrl,
-            width: 70,
-            height: 70,
-            colorDark: "#050508",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-        });
+        new QRCode(document.getElementById("qrcode"), { text: guestPageUrl, width: 70, height: 70, colorDark: "#050508", colorLight: "#ffffff" });
 
         function updateCountdown() {
             const now = new Date();
@@ -259,120 +195,39 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        const totalCostInput = document.getElementById('totalCostInput');
-        totalCostInput.value = localStorage.getItem('birthday_total_cost') || '90';
-        totalCostInput.addEventListener('input', () => {
-            localStorage.setItem('birthday_total_cost', totalCostInput.value);
-            calculateBudget();
-        });
-
-        function calculateBudget() {
-            const total = parseFloat(totalCostInput.value) || 0;
-            const headCount = Math.max(1, globalPizzaCount);
-            const perHead = total / headCount;
-            document.getElementById('perHeadCost').innerText = perHead.toFixed(2) + ' € p.P.';
-            
-            document.getElementById('calcGluhwein').innerText = Math.max(2, Math.ceil(headCount / 3)) + ' Flaschen';
-            document.getElementById('calcDrinks').innerText = Math.max(2, Math.ceil(headCount / 4)) + ' Kisten / Packs';
-        }
-
-        const categories = [
-            {
-                title: "🧥 Kleidung & Komfort",
-                items: ["Warme Jacke & Zwiebel-Look", "Mütze & dicke Handschuhe", "Feste warme Schuhe", "Taschenwärmer / Pads"]
-            },
-            {
-                title: "🍕 Verpflegung & Getränke",
-                items: ["Thermoskannen (Glühwein/Punsch)", "Becher / Tassen", "Pizza-Bestellung planen", "Müllsäcke & Feuchttücher"]
-            },
-            {
-                title: "🎧 Technik & Logistik",
-                items: ["Bluetooth-Box aufgeladen", "Powerbank fürs Handy", "Taschenlampe für Lieferdienst", "Klappstühle / Decken"]
-            }
-        ];
-
-        const checklistContainer = document.getElementById('checklistContainer');
-        function renderChecklist() {
-            checklistContainer.innerHTML = '';
-            let totalItems = 0, checkedItems = 0;
-            categories.forEach((cat, catIdx) => {
-                let card = document.createElement('div');
-                card.className = "glass-card rounded-2xl p-4 space-y-3 flex flex-col justify-between";
-                let titleHtml = `<h3 class="font-bold text-xs text-cyan-400 border-b border-slate-800 pb-2 uppercase tracking-wider">${cat.title}</h3>`;
-                let itemsHtml = '<div class="space-y-2.5">';
-                cat.items.forEach((item, itemIdx) => {
-                    totalItems++;
-                    const sKey = `check_a_${catIdx}_${itemIdx}`, nKey = `note_a_${catIdx}_${itemIdx}`;
-                    const isChecked = localStorage.getItem(sKey) === 'true';
-                    const savedNote = localStorage.getItem(nKey) || '';
-                    if (isChecked) checkedItems++;
-                    itemsHtml += `
-                        <div class="space-y-1.5 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
-                            <label class="flex items-start gap-2.5 cursor-pointer text-xs text-slate-200">
-                                <input type="checkbox" data-key="${sKey}" ${isChecked ? 'checked' : ''} onchange="saveCheck(this)" class="mt-0.5 w-4 h-4 rounded border-slate-700 text-pink-600 bg-slate-900 accent-pink-500">
-                                <span class="font-medium">${item}</span>
-                            </label>
-                            <input type="text" data-note-key="${nKey}" value="${savedNote}" placeholder="Wer bringt es mit?..." oninput="saveNote(this)" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-[11px] text-slate-300 focus:outline-none focus:border-pink-500">
-                        </div>`;
-                });
-                itemsHtml += '</div>';
-                card.innerHTML = titleHtml + itemsHtml;
-                checklistContainer.appendChild(card);
-            });
-            const percent = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
-            document.getElementById('progress-bar').style.width = percent + '%';
-            document.getElementById('progress-text').innerText = percent + '% erledigt';
-        }
-        function saveCheck(el) { localStorage.setItem(el.getAttribute('data-key'), el.checked); renderChecklist(); }
-        function saveNote(el) { localStorage.setItem(el.getAttribute('data-note-key'), el.value); }
-
-        function loadAdminGuests() {
+        async function fetchCloudGuests() {
+            const { data: guests, error } = await _supabase.from('guests').select('*');
             const listContainer = document.getElementById('adminGuestList');
-            let guests = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-                { name: "Niklas", status: "yes", plusOne: "", pizza: "Ja", item: "", drink: "Glühwein", music: "" }
-            ];
-            
+            if(error) { listContainer.innerHTML = `<div class="text-rose-400 text-xs">Fehler beim Laden.</div>`; return; }
+
             listContainer.innerHTML = '';
             let countYes = 0, countMaybe = 0, countNo = 0, pizzaCount = 0;
 
-            guests.forEach((g, index) => {
+            guests.forEach((g) => {
                 if(g.status === 'yes') {
                     countYes++;
                     if(g.pizza === 'Ja' || g.pizza === 'Teile') {
                         pizzaCount++;
-                        if(g.plusOne && g.plusOne.trim() !== '') pizzaCount++;
+                        if(g.plus_one && g.plus_one.trim() !== '') pizzaCount++;
                     }
-                }
-                else if(g.status === 'maybe') countMaybe++;
+                } else if(g.status === 'maybe') countMaybe++;
                 else countNo++;
 
-                let badgeColor = "bg-slate-500/10 text-slate-400 border-slate-500/20";
-                let statusText = "Offen";
-                if(g.status === 'yes') { badgeColor = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"; statusText = "Dabei 🍻"; }
-                else if(g.status === 'maybe') { badgeColor = "bg-amber-500/15 text-amber-400 border-amber-500/30"; statusText = "Vielleicht 🤔"; }
-                else if(g.status === 'no') { badgeColor = "bg-rose-500/15 text-rose-400 border-rose-500/30"; statusText = "Absage ❌"; }
-
-                let plusOneHtml = g.plusOne ? `<div class="text-[11px] text-pink-300 font-medium">👥 Begleitung: ${g.plusOne}</div>` : '';
-                let pizzaBadge = g.pizza === 'Nein' ? '<span class="text-[10px] text-rose-400 font-semibold">🍕 Pizza: Nein</span>' : `<span class="text-[10px] text-amber-300 font-semibold">🍕 Pizza: ${g.pizza}</span>`;
-                let itemHtml = g.item ? `<div class="text-[10px] text-slate-300">📦 Bringt mit: ${g.item}</div>` : '';
-                let drinkHtml = g.drink ? `<div class="text-[10px] text-teal-300">🥤 Getränk: ${g.drink}</div>` : '';
-                let musicHtml = g.music ? `<div class="text-[10px] text-purple-300">🎵 Musik: ${g.music}</div>` : '';
+                let badgeColor = g.status === 'yes' ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" : (g.status === 'maybe' ? "bg-amber-500/15 text-amber-400 border-amber-500/30" : "bg-rose-500/15 text-rose-400 border-rose-500/30");
+                let statusText = g.status === 'yes' ? "Dabei 🍻" : (g.status === 'maybe' ? "Vielleicht 🤔" : "Absage ❌");
 
                 let row = document.createElement('div');
-                row.className = "flex flex-col text-xs glass-card p-3 rounded-xl gap-1 relative group";
+                row.className = "flex flex-col text-xs glass-card p-3 rounded-xl gap-1";
                 row.innerHTML = `
                     <div class="flex justify-between items-center">
                         <span class="font-bold text-slate-100 text-sm">${g.name}</span>
                         <div class="flex items-center gap-2">
                             <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-md border ${badgeColor}">${statusText}</span>
-                            <button onclick="deleteGuest(${index})" class="text-rose-400 hover:text-rose-200 px-1.5 py-0.5 bg-rose-950/60 rounded border border-rose-900/50 text-[10px]" title="Gast löschen">🗑️</button>
+                            <button onclick="deleteGuest('${g.name}')" class="text-rose-400 hover:text-rose-200 px-1.5 py-0.5 bg-rose-950/60 rounded border border-rose-900/50 text-[10px]">🗑️</button>
                         </div>
                     </div>
-                    ${plusOneHtml}
-                    ${pizzaBadge}
-                    ${itemHtml}
-                    ${drinkHtml}
-                    ${musicHtml}
+                    ${g.plus_one ? `<div class="text-[11px] text-pink-300">👥 Begleitung: ${g.plus_one}</div>` : ''}
+                    <div class="text-[10px] text-amber-300">🍕 Pizza: ${g.pizza} | 📦 Mitbringsel: ${g.item || 'Keins'}</div>
                 `;
                 listContainer.appendChild(row);
             });
@@ -385,44 +240,42 @@
             calculateBudget();
         }
 
-        function deleteGuest(index) {
-            let guests = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            if(confirm(`Möchtest du "${guests[index].name}" wirklich von der Liste löschen?`)) {
-                guests.splice(index, 1);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(guests));
-                loadAdminGuests();
+        async function deleteGuest(name) {
+            if(confirm(`Möchtest du "${name}" wirklich löschen?`)) {
+                await _supabase.from('guests').delete().eq('name', name);
+                fetchCloudGuests();
             }
         }
 
-        setInterval(loadAdminGuests, 1000);
+        _supabase.channel('public:guests').on('postgres_changes', { event: '*', schema: 'public', table: 'guests' }, payload => {
+            fetchCloudGuests();
+        }).subscribe();
 
-        function copyGuestLink() {
-            navigator.clipboard.writeText(guestPageUrl).then(() => {
-                alert("Gast-Link in Zwischenablage kopiert!");
-            });
+        function calculateBudget() {
+            const total = parseFloat(document.getElementById('totalCostInput').value) || 0;
+            const headCount = Math.max(1, globalPizzaCount);
+            document.getElementById('perHeadCost').innerText = (total / headCount).toFixed(2) + ' € p.P.';
+            document.getElementById('calcGluhwein').innerText = Math.max(2, Math.ceil(headCount / 3)) + ' Flaschen';
+            document.getElementById('calcDrinks').innerText = Math.max(2, Math.ceil(headCount / 4)) + ' Kisten / Packs';
         }
 
-        function shareWhatsApp() {
-            const text = encodeURIComponent("Moin! Trag dich bitte kurz für Niklas' 18. Geburtstag am Elbe-Seitenkanal ein: " + guestPageUrl);
-            window.open("https://api.whatsapp.com/send?text=" + text, "_blank");
-        }
+        const categories = [
+            { title: "🧥 Kleidung", items: ["Warme Jacke", "Mütze & Handschuhe", "Feste Schuhe"] },
+            { title: "🍕 Verpflegung", items: ["Thermoskannen", "Becher", "Müllsäcke"] },
+            { title: "🎧 Technik", items: ["Bluetooth-Box", "Powerbank", "Taschenlampe"] }
+        ];
 
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem(STORAGE_KEY));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "gaesteliste_backup.json");
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-        }
+        const checklistContainer = document.getElementById('checklistContainer');
+        categories.forEach((cat, catIdx) => {
+            let card = document.createElement('div');
+            card.className = "glass-card rounded-2xl p-4 space-y-2";
+            card.innerHTML = `<h3 class="font-bold text-xs text-cyan-400 border-b border-slate-800 pb-2">${cat.title}</h3>` +
+                cat.items.map((i, iIdx) => `<div class="text-xs text-slate-300 py-1">• ${i}</div>`).join('');
+            checklistContainer.appendChild(card);
+        });
 
-        const scratchpad = document.getElementById('scratchpad');
-        scratchpad.value = localStorage.getItem('birthday_scratchpad_admin') || '';
-        scratchpad.addEventListener('input', () => localStorage.setItem('birthday_scratchpad_admin', scratchpad.value));
-
-        renderChecklist();
-        loadAdminGuests();
+        function copyGuestLink() { navigator.clipboard.writeText(guestPageUrl).then(() => alert("Link kopiert!")); }
+        function shareWhatsApp() { window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent("Moin! Trag dich für Niklas' Geburtstag ein: " + guestPageUrl), "_blank"); }
     </script>
 </body>
 </html>

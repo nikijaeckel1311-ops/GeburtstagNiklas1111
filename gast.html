@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zusage & Wünsche • Niklas' 18. Geburtstag</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -15,41 +16,13 @@
                 radial-gradient(circle at 15% 20%, rgba(236, 72, 153, 0.22) 0%, transparent 45%),
                 radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.22) 0%, transparent 45%),
                 radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
-                linear-gradient(rgba(3, 7, 18, 0.92), rgba(3, 7, 18, 0.96)),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+                linear-gradient(rgba(3, 7, 18, 0.92), rgba(3, 7, 18, 0.96));
         }
-        .glass-panel {
-            background: rgba(12, 16, 32, 0.75);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 25px rgba(236, 72, 153, 0.15);
-        }
-        .glass-card {
-            background: rgba(20, 27, 45, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.25s ease;
-        }
-        .input-field {
-            background: rgba(8, 12, 24, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            transition: all 0.2s ease;
-        }
-        .input-field:focus {
-            background: rgba(8, 12, 24, 1);
-            border-color: #ec4899;
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.35);
-            outline: none;
-        }
-        .tab-active {
-            background: rgba(236, 72, 153, 0.25);
-            border-color: rgba(236, 72, 153, 0.6);
-            color: #f472b6;
-            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
-        }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: rgba(5, 5, 8, 0.5); }
-        ::-webkit-scrollbar-thumb { background: rgba(236, 72, 153, 0.5); border-radius: 3px; }
+        .glass-panel { background: rgba(12, 16, 32, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8); }
+        .glass-card { background: rgba(20, 27, 45, 0.6); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .input-field { background: rgba(8, 12, 24, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); }
+        .input-field:focus { background: rgba(8, 12, 24, 1); border-color: #ec4899; outline: none; box-shadow: 0 0 15px rgba(236, 72, 153, 0.35); }
+        .tab-active { background: rgba(236, 72, 153, 0.25); border-color: rgba(236, 72, 153, 0.6); color: #f472b6; }
     </style>
 </head>
 <body class="min-h-screen py-10 px-4 sm:px-6 flex items-center justify-center relative overflow-x-hidden">
@@ -58,24 +31,16 @@
         
         <!-- Header & Countdown -->
         <div class="glass-panel rounded-3xl p-6 sm:p-8 text-center space-y-5 relative overflow-hidden border-t-2 border-pink-500/50">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 text-xs font-bold tracking-wider uppercase bg-pink-500/15 text-pink-300 rounded-full border border-pink-500/30 backdrop-blur-md">
-                <span class="w-2 h-2 rounded-full bg-pink-400 animate-ping"></span>
-                13. November • Street Session
+            <span class="px-3.5 py-1 text-xs font-bold uppercase bg-pink-500/15 text-pink-300 rounded-full border border-pink-500/30">13. November • Kanal Session</span>
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-black text-white pt-1">Niklas' 18. Geburtstag</h1>
+                <p class="text-slate-400 text-xs sm:text-sm font-semibold">Anleger am Schützenverein • Elbe-Seitenkanal</p>
             </div>
-            
-            <div class="space-y-1">
-                <h1 class="text-3xl sm:text-4xl font-black text-white pt-1 tracking-tight">
-                    Niklas' 18. Geburtstag
-                </h1>
-                <p class="text-slate-400 text-xs sm:text-sm font-semibold tracking-wide">Anleger am Schützenverein • Elbe-Seitenkanal</p>
-            </div>
-
             <div class="grid grid-cols-3 gap-3 bg-slate-950/80 p-4 rounded-2xl border border-slate-800 shadow-inner">
-                <div><span id="days" class="text-2xl font-black text-pink-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Tage</span></div>
-                <div><span id="hours" class="text-2xl font-black text-cyan-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Std</span></div>
-                <div><span id="minutes" class="text-2xl font-black text-emerald-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Min</span></div>
+                <div><span id="days" class="text-2xl font-black text-pink-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold">Tage</span></div>
+                <div><span id="hours" class="text-2xl font-black text-cyan-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold">Std</span></div>
+                <div><span id="minutes" class="text-2xl font-black text-emerald-400">00</span><span class="block text-[9px] text-slate-400 uppercase font-bold">Min</span></div>
             </div>
-
             <button onclick="addToCalendar()" class="w-full bg-slate-900/80 hover:bg-slate-800 text-pink-300 font-bold py-2.5 px-4 rounded-xl border border-pink-500/30 text-xs transition shadow-md flex items-center justify-center gap-2">
                 📅 Termin im Kalender speichern (.ics)
             </button>
@@ -98,92 +63,47 @@
 
         <!-- Form Card -->
         <div class="glass-panel rounded-3xl p-6 sm:p-7 space-y-5 border-t-2 border-cyan-500/50">
-            <div class="flex items-center gap-2.5 border-b border-slate-800 pb-3.5">
-                <div class="w-8 h-8 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-300 text-sm font-bold">✍️</div>
-                <div>
-                    <h2 class="text-base font-bold text-slate-100">RSVP & Wunsch-Terminal</h2>
-                    <p class="text-xs text-slate-400">Trag dich ein und sichere dir Pizza & Vibe.</p>
-                </div>
-            </div>
+            <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">✍️ Zusage & Wünsche eintragen</h2>
             
             <div class="space-y-3.5">
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Dein Name / Spitzname *</label>
-                    <input type="text" id="guestNameInput" placeholder="z.B. Leon" class="input-field w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500">
-                </div>
-                
-                <div>
-                    <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Begleitung (+1)</label>
-                    <input type="text" id="guestPlusOneInput" placeholder="Name der Begleitung (falls vorhanden)..." class="input-field w-full rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500">
-                </div>
+                <input type="text" id="guestNameInput" placeholder="Dein Name / Spitzname *" class="input-field w-full rounded-xl px-4 py-2.5 text-sm text-slate-200">
+                <input type="text" id="guestPlusOneInput" placeholder="Begleitung (+1 Name, optional)..." class="input-field w-full rounded-xl px-4 py-2.5 text-xs text-slate-200">
 
                 <div class="bg-slate-950/70 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                    <label class="text-xs font-bold text-slate-300 flex items-center gap-2">
-                        <span>🍕</span> Pizza-Bedarf (Lieferung an den Anleger):
-                    </label>
+                    <label class="text-xs font-bold text-slate-300">🍕 Pizza-Bedarf:</label>
                     <div class="grid grid-cols-3 gap-2">
-                        <label class="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 p-2.5 rounded-xl cursor-pointer text-xs text-slate-200 border border-slate-800 transition font-semibold">
+                        <label class="flex items-center justify-center gap-1 bg-slate-900 p-2.5 rounded-xl cursor-pointer text-xs text-slate-200 border border-slate-800 font-semibold">
                             <input type="radio" name="pizzaChoice" value="Ja" checked class="accent-pink-500"> Ja
                         </label>
-                        <label class="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 p-2.5 rounded-xl cursor-pointer text-xs text-slate-200 border border-slate-800 transition font-semibold">
+                        <label class="flex items-center justify-center gap-1 bg-slate-900 p-2.5 rounded-xl cursor-pointer text-xs text-slate-200 border border-slate-800 font-semibold">
                             <input type="radio" name="pizzaChoice" value="Teile" class="accent-pink-500"> Teilen
                         </label>
-                        <label class="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 p-2.5 rounded-xl cursor-pointer text-xs text-slate-200 border border-slate-800 transition font-semibold">
+                        <label class="flex items-center justify-center gap-1 bg-slate-900 p-2.5 rounded-xl cursor-pointer text-xs text-slate-200 border border-slate-800 font-semibold">
                             <input type="radio" name="pizzaChoice" value="Nein" class="accent-pink-500"> Nein
                         </label>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Mitbringsel</label>
-                        <input type="text" id="guestItemInput" placeholder="z.B. Klappstuhl" class="input-field w-full rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Getränke</label>
-                        <input type="text" id="guestDrinkInput" placeholder="z.B. Glühwein" class="input-field w-full rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Musikwunsch</label>
-                        <input type="text" id="guestMusicInput" placeholder="Song / Artist" class="input-field w-full rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500">
-                    </div>
-                </div>
+                <input type="text" id="guestItemInput" placeholder="Mitbringsel (z.B. Klappstuhl)..." class="input-field w-full rounded-xl px-3 py-2 text-xs text-slate-200">
+                <input type="text" id="guestDrinkInput" placeholder="Getränke-Wunsch..." class="input-field w-full rounded-xl px-3 py-2 text-xs text-slate-200">
+                <input type="text" id="guestMusicInput" placeholder="Musikwunsch..." class="input-field w-full rounded-xl px-3 py-2 text-xs text-slate-200">
 
                 <div class="grid grid-cols-3 gap-2.5 pt-2">
-                    <button onclick="submitGuest('yes')" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-2 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex flex-col items-center justify-center gap-1 border border-emerald-400/30">
-                        <span class="text-base">🍻</span> Dabei
-                    </button>
-                    <button onclick="submitGuest('maybe')" class="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold py-3 px-2 rounded-xl text-xs transition shadow-lg shadow-amber-600/30 flex flex-col items-center justify-center gap-1 border border-amber-400/30">
-                        <span class="text-base">🤔</span> Vielleicht
-                    </button>
-                    <button onclick="submitGuest('no')" class="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold py-3 px-2 rounded-xl text-xs transition shadow-lg shadow-rose-600/30 flex flex-col items-center justify-center gap-1 border border-rose-400/30">
-                        <span class="text-base">❌</span> Absage
-                    </button>
+                    <button onclick="submitGuest('yes')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg">🍻 Dabei</button>
+                    <button onclick="submitGuest('maybe')" class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg">🤔 Vielleicht</button>
+                    <button onclick="submitGuest('no')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 rounded-xl text-xs shadow-lg">❌ Absage</button>
                 </div>
             </div>
 
             <div id="feedbackBox" class="hidden text-xs text-pink-300 bg-pink-950/60 p-3 rounded-xl border border-pink-500/40 text-center font-bold"></div>
-
-            <div class="pt-4 border-t border-slate-800 space-y-3">
-                <div class="flex justify-between items-center text-xs">
-                    <span id="statsCounter" class="uppercase tracking-wider font-extrabold text-slate-400 text-[10px]">Gästeliste (0)</span>
-                    <div class="flex gap-1">
-                        <button onclick="setFilter('all')" id="tabAll" class="px-2.5 py-1 rounded-lg border text-[10px] tab-active transition font-semibold">Alle</button>
-                        <button onclick="setFilter('yes')" id="tabYes" class="px-2.5 py-1 rounded-lg border text-[10px] border-slate-800 text-slate-400 transition font-semibold">Dabei</button>
-                        <button onclick="setFilter('maybe')" id="tabMaybe" class="px-2.5 py-1 rounded-lg border text-[10px] border-slate-800 text-slate-400 transition font-semibold">Vielleicht</button>
-                        <button onclick="setFilter('no')" id="tabNo" class="px-2.5 py-1 rounded-lg border text-[10px] border-slate-800 text-slate-400 transition font-semibold">Absage</button>
-                    </div>
-                </div>
-                
-                <div id="guestListView" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
-            </div>
         </div>
 
     </div>
 
     <script>
-        const STORAGE_KEY = 'niklas_birthday_shared_guests_v1';
-        let currentFilter = 'all';
+        const SUPABASE_URL = 'DEINE_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'DEIN_SUPABASE_ANON_KEY';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function fetchWeather() {
             try {
@@ -215,123 +135,33 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        function submitGuest(status) {
-            const inputName = document.getElementById('guestNameInput');
-            const inputPlusOne = document.getElementById('guestPlusOneInput');
-            const inputItem = document.getElementById('guestItemInput');
-            const inputDrink = document.getElementById('guestDrinkInput');
-            const inputMusic = document.getElementById('guestMusicInput');
-            
-            const pizzaRadio = document.querySelector('input[name="pizzaChoice"]:checked');
-            const pizzaVal = pizzaRadio ? pizzaRadio.value : 'Ja';
+        async function submitGuest(status) {
+            const name = document.getElementById('guestNameInput').value.trim();
+            if(!name) { alert("Bitte gib deinen Namen ein!"); return; }
 
-            let name = inputName.value.trim().split(' ')[0]; 
-            if(!name) {
-                alert("Bitte gib deinen Namen ein!");
-                inputName.focus();
-                return;
-            }
-            name = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-            const plusOne = inputPlusOne.value.trim();
-            const item = inputItem.value.trim();
-            const drink = inputDrink.value.trim();
-            const music = inputMusic.value.trim();
+            const plus_one = document.getElementById('guestPlusOneInput').value.trim();
+            const pizza = document.querySelector('input[name="pizzaChoice"]:checked').value;
+            const item = document.getElementById('guestItemInput').value.trim();
+            const drink = document.getElementById('guestDrinkInput').value.trim();
+            const music = document.getElementById('guestMusicInput').value.trim();
+
+            const { error } = await _supabase.from('guests').upsert([
+                { name, status, plus_one, pizza, item, drink, music }
+            ], { onConflict: 'name' });
 
             const feedback = document.getElementById('feedbackBox');
-            let guests = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-                { name: "Niklas", status: "yes", plusOne: "", pizza: "Ja", item: "", drink: "Glühwein", music: "" }
-            ];
-
-            const existingIndex = guests.findIndex(g => g.name.toLowerCase() === name.toLowerCase());
-            
-            if(existingIndex >= 0) {
-                guests[existingIndex].status = status;
-                guests[existingIndex].name = name;
-                guests[existingIndex].plusOne = plusOne;
-                guests[existingIndex].pizza = pizzaVal;
-                if(item !== "") guests[existingIndex].item = item;
-                if(drink !== "") guests[existingIndex].drink = drink;
-                if(music !== "") guests[existingIndex].music = music;
-            } else {
-                guests.push({ name: name, status: status, plusOne: plusOne, pizza: pizzaVal, item: item, drink: drink, music: music });
-            }
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(guests));
-            inputName.value = '';
-            inputPlusOne.value = '';
-            inputItem.value = '';
-            inputDrink.value = '';
-            inputMusic.value = '';
-            renderGuestListView();
-
             feedback.classList.remove('hidden');
-            feedback.innerHTML = `🔥 Gespeichert für <strong>${name}</strong>!`;
-            setTimeout(() => feedback.classList.add('hidden'), 4000);
-        }
-
-        function setFilter(filter) {
-            currentFilter = filter;
-            ['all', 'yes', 'maybe', 'no'].forEach(f => {
-                const btn = document.getElementById('tab' + f.charAt(0).toUpperCase() + f.slice(1));
-                if(f === filter) {
-                    btn.className = "px-2.5 py-1 rounded-lg border text-[10px] tab-active transition font-semibold";
-                } else {
-                    btn.className = "px-2.5 py-1 rounded-lg border text-[10px] border-slate-800 text-slate-400 transition font-semibold";
-                }
-            });
-            renderGuestListView();
-        }
-
-        function renderGuestListView() {
-            const container = document.getElementById('guestListView');
-            const statsCounter = document.getElementById('statsCounter');
-            let guests = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-                { name: "Niklas", status: "yes", plusOne: "", pizza: "Ja", item: "", drink: "Glühwein", music: "" }
-            ];
-
-            container.innerHTML = '';
-            statsCounter.innerText = `Gästeliste (${guests.length})`;
-
-            const filteredGuests = guests.filter(g => {
-                if(currentFilter === 'yes') return g.status === 'yes';
-                if(currentFilter === 'maybe') return g.status === 'maybe';
-                if(currentFilter === 'no') return g.status === 'no';
-                return true;
-            });
-
-            if(filteredGuests.length === 0) {
-                container.innerHTML = `<div class="text-center text-xs text-slate-500 py-4">Keine Einträge in dieser Kategorie.</div>`;
-                return;
+            if(error) {
+                feedback.innerHTML = `❌ Fehler beim Speichern.`;
+            } else {
+                feedback.innerHTML = `🔥 Live in Cloud gespeichert, <strong>${name}</strong>!`;
+                document.getElementById('guestNameInput').value = '';
+                document.getElementById('guestPlusOneInput').value = '';
+                document.getElementById('guestItemInput').value = '';
+                document.getElementById('guestDrinkInput').value = '';
+                document.getElementById('guestMusicInput').value = '';
             }
-
-            filteredGuests.forEach(g => {
-                let badgeColor = "bg-slate-500/10 text-slate-400 border-slate-500/20";
-                let statusText = "Offen";
-                if(g.status === 'yes') { badgeColor = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"; statusText = "Dabei 🍻"; }
-                else if(g.status === 'maybe') { badgeColor = "bg-amber-500/15 text-amber-400 border-amber-500/30"; statusText = "Vielleicht 🤔"; }
-                else if(g.status === 'no') { badgeColor = "bg-rose-500/15 text-rose-400 border-rose-500/30"; statusText = "Absage ❌"; }
-
-                let plusOneHtml = g.plusOne ? `<div class="text-[11px] text-pink-300 font-medium">👥 Begleitung: ${g.plusOne}</div>` : '';
-                let pizzaBadge = g.pizza === 'Nein' ? '<span class="text-[10px] text-rose-400 font-semibold">🍕 Pizza: Nein</span>' : `<span class="text-[10px] text-amber-300 font-semibold">🍕 Pizza: ${g.pizza}</span>`;
-                let itemHtml = g.item ? `<div class="text-[10px] text-slate-300">📦 Bringt mit: ${g.item}</div>` : '';
-                let drinkHtml = g.drink ? `<div class="text-[10px] text-teal-300">🥤 Getränk: ${g.drink}</div>` : '';
-                let musicHtml = g.music ? `<div class="text-[10px] text-purple-300">🎵 Musik: ${g.music}</div>` : '';
-
-                let row = document.createElement('div');
-                row.className = "flex flex-col text-xs glass-card p-3 rounded-xl gap-1";
-                row.innerHTML = `
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-slate-100">${g.name}</span>
-                        <span class="px-2 py-0.5 rounded-md border text-[10px] font-extrabold ${badgeColor}">${statusText}</span>
-                    </div>
-                    ${plusOneHtml}
-                    ${pizzaBadge}
-                    ${itemHtml}
-                    ${drinkHtml}
-                    ${musicHtml}
-                `;
-                container.appendChild(row);
-            });
+            setTimeout(() => feedback.classList.add('hidden'), 4000);
         }
 
         function addToCalendar() {
@@ -356,9 +186,6 @@
             link.click();
             document.body.removeChild(link);
         }
-
-        setInterval(renderGuestListView, 1000);
-        renderGuestListView();
     </script>
 </body>
 </html>
